@@ -7,7 +7,7 @@ import java.util.List;
 
 import it.rdev.rubrica.model.Contact;
 import it.rdev.rubrica.model.ContactDAO;
-
+//prova20
 public class ContactDAOImpl extends AbstractDAO implements ContactDAO {
 	
 	private final String TABLE_NAME = "contacts";
