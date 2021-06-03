@@ -1,14 +1,16 @@
 package it.rdev.rubrica.model;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Contact {
 
 	private Integer id;
 	private String name;
 	private String surname;
-	private List<String> phoneNumbers;
-	private List<String> emails;
+	private Set<String> phoneNumbers;
+	private Set<String> emails;
 	
 	
 	public Contact() {}
@@ -27,18 +29,32 @@ public class Contact {
 		this.surname = surname;
 		return this;
 	}
-	public List<String> getPhoneNumbers() {
+	public Set<String> getPhoneNumbers() {
 		return phoneNumbers;
 	}
-	public Contact setPhoneNumbers(List<String> phoneNumbers) {
+	public Contact setPhoneNumbers(Set<String> phoneNumbers) {
 		this.phoneNumbers = phoneNumbers;
 		return this;
 	}
-	public List<String> getEmails() {
+	public Contact addPhoneNumbers(String phoneNum) {
+		if(this.phoneNumbers==null) {
+			this.phoneNumbers = new TreeSet<>();
+		}
+		this.phoneNumbers.add(phoneNum);
+		return this;
+	}
+	public Set<String> getEmails() {
 		return emails;
 	}
-	public Contact setEmails(List<String> emails) {
+	public Contact setEmails(Set<String> emails) {
 		this.emails = emails;
+		return this;
+	}
+	public Contact addEmails(String email) {
+		if(this.emails==null) {
+			this.emails = new TreeSet<>();
+		}
+		this.emails.add(email);
 		return this;
 	}
 	public Integer getId() {
@@ -52,7 +68,30 @@ public class Contact {
 	@Override
 	public String toString() {
 		return "Contact [id=" + id + ", name=" + name + ", surname=" + surname + ", phoneNumbers=" + phoneNumbers
-				+ ", emails=" + emails + "]";
+				+ ", emails=" + emails + "]\n";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Contact))
+			return false;
+		Contact other = (Contact) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 	
 }

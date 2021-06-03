@@ -1,5 +1,9 @@
 package it.rdev.rubrica.model.impl.rdbms;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -52,6 +56,17 @@ public class DataSource {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	protected BufferedWriter getBuffer() {
+		try {
+			FileWriter file= new FileWriter(new File("test.txt"));
+			BufferedWriter buffer=new BufferedWriter(file);
+			return buffer;
+		}catch(IOException e) {
+			System.out.println("Error buffer - datasource");
+			return null;
 		}
 	}
 

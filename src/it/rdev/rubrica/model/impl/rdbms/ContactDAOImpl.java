@@ -18,6 +18,7 @@ public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
 	public List<Contact> getAll() {
 		List<Contact> contacts = new ArrayList<>();
 		try {
+			/*
 			ResultSet rs = this.executeQuery("SELECT id, name, surname FROM " + TABLE_NAME);
 			Contact c= new Contact();
 			while(rs.next()) {
@@ -46,7 +47,28 @@ public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
 			c.setPhoneNumbers(phoneNumbers);
 			
 			}//fine primo while
-			contacts.add(c);
+			*/
+			ResultSet rs = this.executeQuery("SELECT c.id, c.name, c.surname, m.email, p.number FROM contacts c inner join mail m on c.id=m.id_contacts inner join phone p on c.id=p.id_contacts;");
+			
+			List<String> emails=new ArrayList();
+			List<String> phoneNumbers=new ArrayList();
+			while(rs.next()) {
+					Contact c= new Contact();
+					c.setId(rs.getInt("id"));
+					
+					if(!contacts.contains(c)) {
+						c.setName(rs.getString("name"));
+						c.setSurname(rs.getString("surname"));
+						contacts.add(c);
+					}
+					if(rs.getString("email") != null) c.addEmails(rs.getString("email"));
+					if(rs.getString("number") != null) c.addPhoneNumbers(rs.getString("number"));
+					
+					
+			}
+			
+			//contacts.add(c);
+			
 
 			
 			
@@ -59,18 +81,21 @@ public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
 	@Override
 	public boolean persist(Contact o) throws SQLException {
 		
-		long idc= this.executeInsert("Insert into contacts (name,surname) VALUES(?,?)", o.getName(), o.getSurname() );
+		long idc= this.executeInsert("INSERT INTO contacts (name,surname) VALUES(?, ?) ", o.getName(), o.getSurname() );
 		long ide=0;
 		long idn=0;
+		
 		for(int i=0; i< o.getEmails().size();i++) {
-			ide=this.executeInsert("Insert into" +TABLE_MAIL+" (id_contacts, email) VALUES(?,?)", o.getId(), o.getEmails().get(i));
+			ide=this.executeInsert("Insert into " +TABLE_MAIL+" (id_contacts, email) VALUES(?,?)", o.getId(), o.getEmails());
 			
 		}
 		
 		for(int i=0; i< o.getPhoneNumbers().size();i++) {
-			idn=this.executeInsert("Insert into" +TABLE_PHONE+" (id_contacts, number) VALUES?(?)", o.getId(), o.getPhoneNumbers().get(i));
+			idn=this.executeInsert("Insert into " +TABLE_PHONE+" (id_contacts, number) VALUES?(?)", o.getId(), o.getPhoneNumbers());
 			
 		}
+		
+		
 		if(idc!=0 && ide!=0 && idn!=0) return true;
 		return false;
 
