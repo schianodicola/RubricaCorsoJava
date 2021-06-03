@@ -1,5 +1,6 @@
 package it.rdev.rubrica.model.impl.rdbms;
 
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 import it.rdev.rubrica.model.Contact;
 import it.rdev.rubrica.model.ContactDAO;
 
-public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
+public class ContactDAOImpl extends AbstractDAO<Contact, BigInteger> implements ContactDAO {
 	
 	private final String TABLE_NAME = "contacts";
 	private final String TABLE_MAIL = "mail";
@@ -18,36 +19,7 @@ public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
 	public List<Contact> getAll() {
 		List<Contact> contacts = new ArrayList<>();
 		try {
-			/*
-			ResultSet rs = this.executeQuery("SELECT id, name, surname FROM " + TABLE_NAME);
-			Contact c= new Contact();
-			while(rs.next()) {
-				//contacts.add(
-						//new Contact()
-						c.setId(rs.getInt("id"));
-						c.setName(rs.getString("name"));
-						c.setSurname(rs.getString("surname"));
-			//}
-			//System.out.println("IDDD "+ c.getId());
 			
-			rs = this.executeQuery("SELECT email FROM " + TABLE_MAIL +" WHERE id_contacts=" +c.getId());
-			List<String> emails=new ArrayList();
-			while(rs.next()) {
-						//new Contact()
-						emails.add(rs.getString("email"));
-			}
-			c.setEmails(emails);
-			
-			rs = this.executeQuery("SELECT number FROM " + TABLE_PHONE +" WHERE id_contacts='" +c.getId());
-			List<String> phoneNumbers=new ArrayList();
-			while(rs.next()) {
-						//new Contact()
-						phoneNumbers.add(rs.getString("number"));
-			}
-			c.setPhoneNumbers(phoneNumbers);
-			
-			}//fine primo while
-			*/
 			ResultSet rs = this.executeQuery("SELECT c.id, c.name, c.surname, m.email, p.number FROM contacts c inner join mail m on c.id=m.id_contacts inner join phone p on c.id=p.id_contacts;");
 			
 			List<String> emails=new ArrayList();
@@ -81,23 +53,12 @@ public class ContactDAOImpl extends AbstractDAO<Contact> implements ContactDAO {
 	@Override
 	public boolean persist(Contact o) throws SQLException {
 		
-		long idc= this.executeInsert("INSERT INTO contacts (name,surname) VALUES(?, ?) ", o.getName(), o.getSurname() );
-		long ide=0;
-		long idn=0;
-		
-		for(int i=0; i< o.getEmails().size();i++) {
-			ide=this.executeInsert("Insert into " +TABLE_MAIL+" (id_contacts, email) VALUES(?,?)", o.getId(), o.getEmails());
-			
-		}
-		
-		for(int i=0; i< o.getPhoneNumbers().size();i++) {
-			idn=this.executeInsert("Insert into " +TABLE_PHONE+" (id_contacts, number) VALUES?(?)", o.getId(), o.getPhoneNumbers());
-			
-		}
+		BigInteger id= this.executeInsert("INSERT INTO contacts (name,surname) VALUES(?, ?) ", o.getName(), o.getSurname() );
 		
 		
-		if(idc!=0 && ide!=0 && idn!=0) return true;
-		return false;
+		insertEmailAndPhone(o, id.intValue());
+		
+		return id != null;
 
 	}
 

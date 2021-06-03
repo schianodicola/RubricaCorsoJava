@@ -21,6 +21,12 @@ public class RubricaApp {
 		System.out.println(c.getId());
 		System.out.println(con.getContactList());
 		*/
+		
+		/*
+		RubricaController con = new RubricaController();
+		System.out.println(con.getContactList());
+		*/
+		
 	}
 	
 }
