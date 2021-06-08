@@ -23,7 +23,7 @@ public class DaoManager {
 		try {
 			Class<?> clazz = (Class<?>) Class.forName(
 					CLASS_MAP.get( Configuration.getInstance().getValue(
-								ConfigKeys.TYPE
+								ConfigKeys.PERSISTENCE
 							))
 					);
 			dao = (ContactDAO) clazz.getConstructor().newInstance();
